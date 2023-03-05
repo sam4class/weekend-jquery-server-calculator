@@ -10,65 +10,79 @@ app.use(express.static('server/public'));
 let answer = 0;
 let sign = '';
 
-let twoNumbers = [{
+let twoNumbers = { //#1
     inputNum1: '',
     inputNum2: '',
-    answer: '',  //this might not be needed
-}];
+    sign: '', 
+    answer: '',
+    history: [] //will hold history
+};
 
-app.get('/numbers', function(req, res){
+
+
+app.get('/numbers', function(req, res){ //#2
     console.log('Request was made');
     res.send(twoNumbers);
 })
 
-app.post('/numberGrab', (req,res) => {
+app.post('/numberGrab', (req,res) => {  //#6
     console.log('post a post', req.body);
 
     //incoming value of two numbers
-    let newInputNum1 = Number(req.body.inputNum1);
-    let newInputNum2 = Number(req.body.inputNum2);
-    //let newAnswer = req.body.answer
-    //let newSign = req.body.sign
+    let num1 = Number(req.body.num1);
+    let num2 = Number(req.body.num2);
+    // let newSign = req.body.sign;
+    // let newAnswer = req.body.answer;    
 
-    console.log(newInputNum1, newInputNum2);
 
-    let newTwoNumbers = {
-        inputNum1: newInputNum1,
-        inputNum2: newInputNum2,
-        //answer: newAnswer,
-        //sign: newSign
-    }
+    // console.log(num1, num2, newSign, newAnswer);
 
-    //do calculations?
-    //     if($('#add').on('click')) {
-//         answer = addAnswer;
-//         sign = '+';
-//         console.log('after click', answer, sign);
-        
-//     }
+    // let newTwoNumbers = {
+    //     inputNum1: newInputNum1,
+    //     inputNum2: newInputNum2,
+    //     sign: newSign,
+    //     answer: newAnswer,
+    //     history: [],
+    
+    // }
 
-//     if($('#minus').on('click')){
-//         answer = minusAnswer;
-//         sign = '-';
-//         console.log('after click',answer);
-       
-//     }
+    // twoNumbers.push(newTwoNumbers);
 
-//     if($('#multiply').on('click')){
-//         answer = multiplyAnswer;
-//         sign = '*';
-//         console.log('after click',answer);
-       
-//     }
+    //store the numbers
+    twoNumbers.history.push(req.body.num1);
+    twoNumbers.history.push(req.body.num2);
 
-//     if($('#divide').on('click')){
-//         answer = divideAnswer;
-//         sign = '/';
-//         console.log('after click',answer);
-// }
-    console.log(newTwoNumbers);
+//    // do calculations?
+if(sign === '+'){
+    answer = num1 + num2;
+    console.log('add answer', answer);
+    twoNumbers.answer = answer;
+   
+}
 
-twoNumbers.push(newTwoNumbers);
+if(sign === '-'){
+    answer = num1 - num2;
+    console.log('add answer', answer);
+    twoNumbers.answer = answer;
+    
+}
+
+if(sign === '*'){
+    answer = num1 * num2;
+    console.log('add answer', answer);
+    twoNumbers.answer = answer;
+   
+}
+if(sign === '/'){
+    answer = num1 / num2;
+    console.log('add answer', answer);
+    twoNumbers.answer = answer;
+}
+twoNumbers.history.push(req.body.answer);
+
+    //store the numbers
+twoNumbers.history.push(req.body.num1);
+twoNumbers.history.push(req.body.num2);
 
 res.sendStatus(201);
 });

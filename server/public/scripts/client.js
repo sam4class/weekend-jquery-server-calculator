@@ -1,96 +1,100 @@
+
+
 $(document).ready(onReady);
 
-answer = 0;
-sign = '';
+let answer = 0;
+let sign = '';
+
 
 function onReady(){
     console.log('Time to do this');
+    getTwoNumbers();   //#4
 
-    $('#equals').on('click', grabNumber);
+    $('#equals').on('click', grabNumber); //#5
+ 
+    //find out sign
+    $('#add').on('click', toAdd);
+    $('#minus').on('click', toMinus);
+    $('#multiply').on('click', toMulti);
+    $('#divide').on('click', toDivide);
 
-    //find out how to calculate
-    // $('#add').on('click', addNumbers);
-    // $('#minus').on('click', minusNumbers);
-    // $('#multiply').on('click', multiplyNumbers);
-    // $('#divide').on('click', divideNumbers);
+     
 }
 
-function grabNumber(){
-    
-    num1 = Number($('#number1').val());
-    num2 = Number($('#number2').val());
-    
-    addAnswer = num1 + num2;
-    minusAnswer = num1 - num2;
-    multiplyAnswer = num1 * num2;
-    divideAnswer = num1 / num2;
+function grabNumber(){  //#5.5
+    //what this is doing:
+    //get values from input
+    //ajax to server
+    //deal with response
 
-
-   console.log('input1', num1, 'input2', num2);
+    //get vaules by making an object
+    let nowNumbers ={
+        num1: Number($('#number1').val()),
+        num2: Number($('#number2').val()),
+        
+    }
+    
+   console.log(nowNumbers);
+    //ajax to server
     $.ajax({
         method: 'POST',
         url: '/numberGrab',
         data:{
-           inputNum1: num1,
-           inputNum2: num2,
-            //answer: 0,
-            //sign: '',
-        }
+          nowNumbers, //must be an objest, the one you just made in this post
+         }
     }).then((repsonse) => {
         console.log('Post posted!')
         num1 = Number($('#number1').val(''));
-        num2 = Number($('#number2').val(''));
+        num2 = Number($('#number2').val(''))
+        //update our data
         getTwoNumbers();
+        render(); 
     });
+    //deal with response
+ 
+       
+    }
 
-    if($('#add').on('click')) {
-        answer = addAnswer;
+    function toAdd(){
         sign = '+';
-        console.log('after click', answer, sign);
-       
-        
+        console.log(sign);
     }
 
-    if($('#minus').on('click')){
-        answer = minusAnswer;
+    function toMinus(){
         sign = '-';
-        console.log('after click',answer);
-       
-       
+       console.log(sign);
     }
 
-    if($('#multiply').on('click')){
-        answer = multiplyAnswer;
+    function toMulti(){
         sign = '*';
-        console.log('after click',answer);
-       
-       
+        console.log(sign);
     }
-
-    if($('#divide').on('click')){
-        answer = divideAnswer;
+    function toDivide(){
         sign = '/';
-        console.log('after click',answer);
-        
-}
-     render();   
+        console.log(sign);
     }
+    
 
-function getTwoNumbers(){
+
+ 
+function getTwoNumbers(){ //#3
 
     $.ajax({
         method: 'GET',
         url: '/numbers'
-    }).then (function(response){
+    }).then ((response) => {
         console.log('Inside getTwoNumbers', response);
+        
     }).catch(function(){
         alert('failed at grabTwoNumbers');
     })
+
 }
 
+ 
 
 
-function render(){
+function render(response){
     console.log('Inside render')
 
     $('calSetUp').empty();
