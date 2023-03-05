@@ -35,8 +35,8 @@ function addAllThatInfo(){
         num2: $("#number2").val(),
         sign: sign,
         answer: answer
-    }
-    console.log(info);
+    };
+    console.log('info', info);
     //ajax to server
 
     $.ajax({
@@ -44,13 +44,13 @@ function addAllThatInfo(){
         url: '/infoNeeded',
         data: info, //object
     }).then((response) =>{
-        console.log('post finished');
+        console.log('post finished', response);
         //update with your GET
         getThatInfo();
        
     })
     //deal with response
-   // render();
+    render();
 }
 
 function getThatInfo(){ //get this in onReady
@@ -87,7 +87,7 @@ function toAdd(){
       console.log(sign);
   }
 
-  function render(response){
+  function render(responseInfo){
         console.log('Inside render')
     
         $('calSetUp').empty();
@@ -96,14 +96,14 @@ function toAdd(){
         $('#answer').append(`
         <h2 id="answer">${answer}</h2>`);
     
-
+        for(let response of responseInfo){
         $('#addedData').append(`    
         <div id="pastAnswerList">
             <ul>
-                <li>${num1}${sign}${num2}=${answer}</li>
+                <li>${nums.num1}${nums.sign}${nums.num2}=${nums.answer}</li>
             </ul>
         </div>
         
         `)
     }
-
+  }

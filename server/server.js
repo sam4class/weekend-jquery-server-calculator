@@ -10,7 +10,12 @@ app.use(express.static('server/public'));  //#1 don't forget the port listen
 let answer = 0;
 let sign = '';
 
-let infoList = [{number1: '', sign: "", number2: '', answer: '', history: []}];
+let infoList = {
+    number1: '', 
+    sign: sign, 
+    number2: '', 
+    answer: answer, 
+    history: []};
 
 app.get('/infoNeeded', (req,res) => {
     console.log('request made');
@@ -29,14 +34,14 @@ app.post('/infoNeeded', (req,res) => {
 let num1 = Number(req.body.num1);
 let num2 = Number(req.body.num2);
 let sign = req.body.sign;
-let answer = req.body.answer;
+let answer = Number(req.body.answer);
 
-let allInfo = [{
+let allInfo = {
     number1: num1,
     number2: num2,
     sign: sign,
-    answer: answer
-}];
+    answer: []
+};
 
 if(sign === '+'){
     answer = num1 + num2;
@@ -61,22 +66,13 @@ if(sign === '/'){
     console.log('sign', sign);
    
 }
-infoList.push(allInfo);
-
-
-
+//infoList.push(allInfo);
 
 //store the numbers
 // infoList.history.push(req.body.num1);
 // infoList.history.push(req.body.num2);
 // console.log(infoList);
-
-
-
-
-
-
-    res.sendStatus(201); //res.send(infoList); 
+res.sendStatus(201); 
 })
 
 app.listen(PORT, () => {
