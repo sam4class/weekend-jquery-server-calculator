@@ -7,73 +7,77 @@ const PORT = 8000;
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static('server/public'));  //#1 don't forget the port listen
 
-let answer = 0;
-let sign = '';
+let infoList = [
+    //{ number1: '',
+    // history1: [],
+    // sign: '',
+    // number2: '',
+    // history2: [],
+//}
+];
 
-let infoList = {
-    number1: '', 
-    sign: sign, 
-    number2: '', 
-    answer: answer, 
-    history: []};
-
-app.get('/infoNeeded', (req,res) => {
-    console.log('request made');
+app.get('/calculations', (req,res) =>{
+    console.log('get a get');
     res.send(infoList);
 })
 
-app.post('/infoNeeded', (req,res) => {
+app.post('/addInfo', (req,res) => {
     console.log('post a post', req.body);
 
-    //accessing the info in post client side
-    //data will  be put on req.body
-    //exact same object as the client side
-
-//check how to calculate
+    //make if statement
 
 let num1 = Number(req.body.num1);
 let num2 = Number(req.body.num2);
 let sign = req.body.sign;
-let answer = Number(req.body.answer);
 
-let allInfo = {
-    number1: num1,
-    number2: num2,
-    sign: sign,
-    answer: []
-};
 
-if(sign === '+'){
-    answer = num1 + num2;
-    console.log('add answer', answer);
-    console.log('sign', sign);
-}
+    if(sign === '+'){
+        req.body.answer = num1 + num2;
+        console.log('add answer', req.body.answer);
+        infoList.push(req.body.answer);
+    }
+    
+    if(sign === '-'){
+        req.body.answer = num1 - num2;
+        console.log('add answer', req.body.answer); 
+        
+    }
+    
+    if(sign === '*'){
+        req.body.answer = num1 * num2;
+        console.log('add answer', req.body.answer);
+        
+    }
+    if(sign === '/'){
+        req.body.answer = num1 / num2;
+        console.log('add answer', req.body.answer);
+        
+    }
 
-if(sign === '-'){
-    answer = num1 - num2;
-    console.log('add answer', answer); 
-    console.log('sign', sign);
-}
+    infoList.push(req.body);
 
-if(sign === '*'){
-    answer = num1 * num2;
-    console.log('add answer', answer);
-    console.log('sign', sign);
-}
-if(sign === '/'){
-    answer = num1 / num2;
-    console.log('add answer', answer);
-    console.log('sign', sign);
-   
-}
-//infoList.push(allInfo);
 
-//store the numbers
-// infoList.history.push(req.body.num1);
-// infoList.history.push(req.body.num2);
-// console.log(infoList);
-res.sendStatus(201); 
-})
+
+    //store the guesses
+// let incomNum1 = Number(req.body.num1);
+// let incomHistory1 = req.body.num1;
+// let incomNum2 = Number(req.body.num2);
+// let incomHistory2 = req.body.num2;
+
+//  let incomingInfoList = {
+//     num1: incomNum1,
+//     numhistory1: [incomHistory1],
+//     num2: incomNum2 ,
+//     numhistory2: [incomHistory2],
+//     sign: req.body.sign,
+//     answer: req.body.answer
+//  }
+// console.log(incomingInfoList);
+// infoList.push(incomingInfoList);
+
+res.sendStatus(201);
+
+});
 
 app.listen(PORT, () => {
     console.log('Server is running', PORT);

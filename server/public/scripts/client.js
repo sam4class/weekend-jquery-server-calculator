@@ -2,108 +2,90 @@
 
 $(document).ready(onReady);
 
-let answer = 0;
 let sign = '';
+let answer = '';
 
 function onReady(){
     console.log('This times the charm.');
+    $('#equals').on('click', addIncomingInfo)
 
-    $("#equals").on('click', addAllThatInfo);
+        //find out sign
+        $('#add').on('click', toAdd);
+        $('#minus').on('click', toMinus);
+        $('#multiply').on('click', toMulti);
+        $('#divide').on('click', toDivide);
 
-    //find out sign
-   $('#add').on('click', toAdd);
-   $('#minus').on('click', toMinus);
-   $('#multiply').on('click', toMulti);
-   $('#divide').on('click', toDivide);
+    getCalculations();
 
-    getThatInfo();
 }
 
-let newNum1 = $("#number1").val();
-let newNum2 = $("#number2").val();
+function addIncomingInfo(){
 
-console.log ('these are num1 and num2', newNum1, newNum2);
-
-function addAllThatInfo(){
-    //get values from inputs
-    // let num1 = $("#number1").val();
-    // let num2 = $("#number2").val();
-    // console.log ('these are num1 and num2', num1, num2);
-
-    let info = {
-        num1:$("#number1").val(),
-        num2: $("#number2").val(),
+    let newInfoList = {
+        num1: $('#number1').val(),
+        history1: [$('#number1').val()],
+        num2: $('#number2').val(),
+        history2: [$('#number2').val()],
         sign: sign,
-        answer: answer
-    };
-    console.log('info', info);
-    //ajax to server
+        answer: answer,
+    }
+    console.log('data we need', newInfoList);
 
     $.ajax({
         method: 'POST',
-        url: '/infoNeeded',
-        data: info, //object
-    }).then((response) =>{
-        console.log('post finished', response);
-        //update with your GET
-        getThatInfo();
-       
+        url: '/addInfo',
+        data: newInfoList,
+    }).then((response) => {
+        console.log('this is POST response:', response);
+        num1 = $('#number1').val(''),
+        num2 = $('#number2').val(''),
+        getCalculations();
     })
-    //deal with response
-    render();
 }
 
-function getThatInfo(){ //get this in onReady
-    console.log('Inside getThatInfo');
+function getCalculations(){
+    console.log('inside getInfo')
 
     $.ajax({
         method: 'GET',
-        url: '/infoNeeded'
+        url: '/calculations'
     }).then((response) => {
-        console.log('results from get', response);
-        //will update with render?
+        console.log('Info from getCalculations:', response);
+        //append here for getting the calculations
+        $('#addedData').empty();
 
-    }).catch(function(){
-        alert('failed at getThatInfo');
-    });
+        for(let info of response){
+            $('#addedData').append(`
+            <div id="pastAnswerList">
+            <ul>
+                <li>${info.num1}${info.sign}${info.num2}=${info.answer}</li>
+            </ul>
+        </div>
+            `)
+        }
+    })
 }
 
 function toAdd(){
     sign = '+';
-      console.log(sign);
-  }
+    console.log(sign);
+}
 
-  function toMinus(){
-      sign = '-';
-     console.log(sign);
-  }
+function toMinus(){
+    sign = '-';
+   console.log(sign);
+}
 
-  function toMulti(){
-      sign = '*';
-      console.log(sign);
-  }
-  function toDivide(){
-      sign = '/';
-      console.log(sign);
-  }
+function toMulti(){
+    sign = '*';
+    console.log(sign);
+}
+function toDivide(){
+    sign = '/';
+    console.log(sign);
+}
 
-  function render(responseInfo){
-        console.log('Inside render')
-    
-        $('calSetUp').empty();
-        $('#answer').empty();
-    
-        $('#answer').append(`
-        <h2 id="answer">${answer}</h2>`);
-    
-        for(let response of responseInfo){
-        $('#addedData').append(`    
-        <div id="pastAnswerList">
-            <ul>
-                <li>${nums.num1}${nums.sign}${nums.num2}=${nums.answer}</li>
-            </ul>
-        </div>
-        
-        `)
-    }
-  }
+
+
+
+
