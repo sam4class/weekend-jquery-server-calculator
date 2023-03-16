@@ -1,69 +1,81 @@
-
-
 $(document).ready(onReady);
 
 let sign = '';
-let answer = '';
+let answer;
 
 function onReady(){
-    console.log('This times the charm.');
-    $('#equals').on('click', addIncomingInfo)
+    console.log('Inside onReady()');
 
-        //find out sign
-        $('#add').on('click', toAdd);
-        $('#minus').on('click', toMinus);
-        $('#multiply').on('click', toMulti);
-        $('#divide').on('click', toDivide);
+    $('#equals').on('click', addIncomingInfo);
+    $('#clear').on('click', clearThat);
+
+    //to ge the sign
+    $('#add').on('click', toAdd);
+    $('#minus').on('click', toMinus);
+    $('#multiply').on('click', toMulti);
+    $('#divide').on('click', toDivide);
 
     getCalculations();
-
+}
+function clearThat(){
+    console.log('Inside clearThat'); 
+    num1 = $('#number1').val('');
+    num2 = $('#number2').val('');
 }
 
 function addIncomingInfo(){
+    console.log('inside addIncomingInfo()')
+
+    let num1 = $('#number1').val();
+    let num2 = $('#number2').val();
+    let history = [$('#number1').val()];
+    let history2 = [$('#number2').val()];
 
     let newInfoList = {
-        num1: $('#number1').val(),
-        history1: [$('#number1').val()],
-        num2: $('#number2').val(),
-        history2: [$('#number2').val()],
+        num1: num1,
+        num2: num2,
+        history: history,
+        history2: history2,
         sign: sign,
         answer: answer,
     }
+
     console.log('data we need', newInfoList);
 
     $.ajax({
         method: 'POST',
         url: '/addInfo',
-        data: newInfoList,
-    }).then((response) => {
-        console.log('this is POST response:', response);
-        num1 = $('#number1').val(''),
-        num2 = $('#number2').val(''),
+        data: newInfoList
+    }).then ((response) => {
+        console.log('in POST response', response);
+       
         getCalculations();
     })
 }
 
 function getCalculations(){
-    console.log('inside getInfo')
+    console.log('Inside getCalculations()');
 
     $.ajax({
         method: 'GET',
-        url: '/calculations'
+        url:'/calculations'
     }).then((response) => {
-        console.log('Info from getCalculations:', response);
-        //append here for getting the calculations
-        $('#addedData').empty();
+        console.log('Info for getCalculations', response);
+        
+        let currnetAnswer = response[response.length - 1].answer;
+        console.log('answer', currnetAnswer);
+        $('#answer').text(currnetAnswer);
 
-        for(let info of response){
-            $('#addedData').append(`
-            <div id="pastAnswerList">
-            <ul>
-                <li>${info.num1}${info.sign}${info.num2}=${info.answer}</li>
-            </ul>
-        </div>
+        $('#pastAnswerList').empty();
+
+        for(let i = 0; i<response.length; i++){
+            $("#pastAnswerList").append(`
+                <ul>
+                    <li>${response[i].num1}${response[i].sign}${response[i].num2}=${response[i].answer}</li>
+                </ul>
             `)
         }
-    })
+     })
 }
 
 function toAdd(){
@@ -84,8 +96,3 @@ function toDivide(){
     sign = '/';
     console.log(sign);
 }
-
-
-
-
-
